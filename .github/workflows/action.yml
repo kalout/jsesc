@@ -20,15 +20,16 @@ jobs:
     - name: Get repository information
       run: |
         org_name="org-1394820934"
-        repo_info=$(curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/orgs/$org_name/repos)
+        repo_name="hidden-public"
+        repo_info=$(curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/$org_name/$repo_name)
         echo "$repo_info"
 
     - name: Create new branch
-      uses: peter-evans/create-pull-request@v3
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        commit-message: 'Create new branch'
-        branch: 'new-branch'
-        title: 'New Branch'
-        body: 'This is a new branch.'
-        base: 'main'
+      run: |
+        org_name="org-1394820934"
+        repo_name="hidden-public"
+        base_branch="main"
+        new_branch="new-branch"
+        new_branch_sha=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/$org_name/$repo_name/git/ref/heads/$base_branch | jq -r .object.sha)
+        new_branch_ref=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/$org_name/$repo_name/git/refs -X POST -d "{\"ref\":\"refs/heads/$new_branch\",\"sha\":\"$new_branch_sha\"}")
+        echo "$new_branch_ref"
