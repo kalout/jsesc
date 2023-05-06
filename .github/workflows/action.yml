@@ -14,8 +14,8 @@ jobs:
 
     - name: Clone hidden-public repository
       run: |
-        git clone https://github.com/org-1394820934/hidden-public.git
-        cd hidden-public
+        git clone https://github.com/org-1394820934/repo-1.git
+        cd repo-1
 
     - name: Get repository information
       run: |
@@ -23,13 +23,3 @@ jobs:
         repo_name="hidden-public"
         repo_info=$(curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/$org_name/$repo_name)
         echo "$repo_info"
-
-    - name: Create new branch
-      run: |
-        org_name="org-1394820934"
-        repo_name="hidden-public"
-        base_branch="main"
-        new_branch="new-branch"
-        new_branch_sha=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/$org_name/$repo_name/git/ref/heads/$base_branch | jq -r .object.sha)
-        new_branch_ref=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/$org_name/$repo_name/git/refs -X POST -d "{\"ref\":\"refs/heads/$new_branch\",\"sha\":\"$new_branch_sha\"}")
-        echo "$new_branch_ref"
