@@ -1,19 +1,24 @@
-name: Clone hidden-public repository and print README
+name: Clone hidden-public repository and get repository information
 
 on:
   push:
     branches: [main]
 
 jobs:
-  clone-and-print:
+  clone-and-get-info:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Clone hidden-public
+    - name: Clone hidden-public repository
       run: |
         git clone https://github.com/org-1394820934/hidden-public.git
         cd hidden-public
-        cat README.md
+
+    - name: Get repository information
+      run: |
+        org_name="org-1394820934"
+        repo_info=$(curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/orgs/$org_name/repos)
+        echo "$repo_info"
