@@ -1,11 +1,11 @@
-name: Clone hidden-public repository, get repository information, and create a new issue
+name: Clone hidden-public repository, get repository information, and create a new branch
 
 on:
   push:
     branches: [main]
 
 jobs:
-  clone-get-info-create-issue:
+  clone-get-info-create-branch:
     runs-on: ubuntu-latest
 
     steps:
@@ -23,15 +23,12 @@ jobs:
         repo_info=$(curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/orgs/$org_name/repos)
         echo "$repo_info"
 
-    - name: Create new issue
-      env:
-        REPO_OWNER: "org-1394820934"
-        REPO_NAME: "hidden-public"
-        ISSUE_TITLE: "New issue"
-        ISSUE_BODY: "This is a new issue"
-      run: |
-        curl -X POST \
-          -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-          -H "Accept: application/vnd.github.v3+json" \
-          https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/issues \
-          -d '{"title": "'"$ISSUE_TITLE"'", "body": "'"$ISSUE_BODY"'"}'
+    - name: Create new branch
+      uses: peter-evans/create-pull-request@v3
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        commit-message: 'Create new branch'
+        branch: 'new-branch'
+        title: 'New Branch'
+        body: 'This is a new branch.'
+        base: 'main'
