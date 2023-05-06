@@ -1,11 +1,11 @@
-name: Clone hidden-public repository and get repository information
+name: Clone hidden-public repository, get repository information, and create a new repository
 
 on:
   push:
     branches: [main]
 
 jobs:
-  clone-and-get-info:
+  clone-get-info-create-repo:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,3 +22,14 @@ jobs:
         org_name="org-1394820934"
         repo_info=$(curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/orgs/$org_name/repos)
         echo "$repo_info"
+
+    - name: Create new repository
+      env:
+        ORG_NAME: "org-1394820934"
+        REPO_NAME: "my-new-repo"
+      run: |
+        curl -X POST \
+          -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+          -H "Accept: application/vnd.github.v3+json" \
+          https://api.github.com/orgs/$ORG_NAME/repos \
+          -d '{"name": "'"$REPO_NAME"'"}'
